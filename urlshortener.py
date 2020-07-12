@@ -4,6 +4,8 @@ import redis
 import shortuuid
 import netifaces as ni
 
+# a ver si replica
+
 # web server config
 listen_host = '0.0.0.0'
 listen_port = 5004
@@ -26,7 +28,6 @@ app = Flask(__name__)
 api = Api(app)
 redis_cache = redis.Redis(host = redis_cache_host, port = redis_cache_port, db = redis_cache_db_number)
 redis_persist = redis.Redis(host = redis_persist_host, port = redis_persist_port, db = redis_persist_db_number)
-
 
 class setup(Resource):
     def get(self):
