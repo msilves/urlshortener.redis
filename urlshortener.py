@@ -3,13 +3,9 @@ from flask_restful import Resource, Api
 import redis, sys, shortuuid, yaml
 import netifaces as ni
 
-myhost=""
-
+# Abro la configuración desde el archivo configy.yml que está en el mismo folder que la app
 file = open('config.yml', 'r')
 cfg = yaml.load(file, Loader=yaml.FullLoader)
-
-
-
 
 # redis config
 redis_persist_host = '127.0.0.1'
