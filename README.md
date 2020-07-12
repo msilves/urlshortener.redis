@@ -3,7 +3,7 @@ Ejercicio de URL Shortener usando Redis como base de datos KV
 La idea es crear URLs cortas que se asocien a URL largas que un administrador debe proveer por api.  Una vez asociadas, usando la URL corta en un browser automáticamente se redirige la página a la URL larga.
 
 La api permite:
-- ver todos los pares de URL corta y larga
+- ver todos los pares de URL corta y larga.  Esto se usa solo para debugging, si la base crece puede generar un uso de cpu muy alto tanto en este proceso como en la base de datos
 - agregar una URL larga, devolviendo la corta
 - borrar una URL corta
 

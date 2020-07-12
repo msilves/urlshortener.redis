@@ -1,12 +1,15 @@
 from flask import Flask, redirect, request, render_template, make_response
 from flask_restful import Resource, Api
-import redis
-import shortuuid
+import redis, sys, shortuuid, yaml
 import netifaces as ni
 
-# web server config
-listen_host = '0.0.0.0'
-listen_port = 5004
+myhost=""
+
+file = open('config.yml', 'r')
+cfg = yaml.load(file, Loader=yaml.FullLoader)
+
+
+
 
 # redis config
 redis_persist_host = '127.0.0.1'
@@ -15,17 +18,19 @@ redis_persist_db_number = 1
 redis_cache_host = '127.0.0.1'
 redis_cache_port = 6379
 redis_cache_db_number = 0
-expire_cache = 5 # tiempo en segundos que dura el cache en Redis
+expire_cache = 10 # tiempo en segundos que dura el cache en Redis
 
 #short url host
-ni.ifaddresses('eth0')
-server_ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
-myhost="http://" + server_ip
+if( cfg['myhost']=="" ):
+    ni.ifaddresses('eth0')
+    server_ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+    myhost="http://" + server_ip
+
 
 app = Flask(__name__)
 api = Api(app)
-redis_cache = redis.Redis(host = redis_cache_host, port = redis_cache_port, db = redis_cache_db_number)
-redis_persist = redis.Redis(host = redis_persist_host, port = redis_persist_port, db = redis_persist_db_number)
+redis_cache = redis.Redis(host = cfg['redis_cache']['host'], port = cfg['redis_cache']['port'], db = cfg['redis_cache']['db_number'])
+redis_persist = redis.Redis(host = cfg['redis_persist']['host'], port = cfg['redis_persist']['port'], db = cfg['redis_persist']['db_number'])
 
 class setup(Resource): # La uso en /api/short_url/.  Implementa el agregado y borado de urls
     def get(self):
@@ -106,5 +111,5 @@ api.add_resource(print_short2long, '/api/short_url/<short_url>')
 
 
 if __name__ == '__main__':
-    app.run(host=listen_host, port=str(listen_port))
+    app.run(host=cfg['listen_host'], port=cfg['listen_port'])
 
