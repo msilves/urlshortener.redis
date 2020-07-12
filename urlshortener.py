@@ -4,8 +4,6 @@ import redis
 import shortuuid
 import netifaces as ni
 
-# a ver si replica
-
 # web server config
 listen_host = '0.0.0.0'
 listen_port = 5004
