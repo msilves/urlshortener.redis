@@ -27,7 +27,7 @@ api = Api(app)
 redis_cache = redis.Redis(host = redis_cache_host, port = redis_cache_port, db = redis_cache_db_number)
 redis_persist = redis.Redis(host = redis_persist_host, port = redis_persist_port, db = redis_persist_db_number)
 
-class setup(Resource):
+class setup(Resource): # La uso en /api/short_url/.  Implementa el agregado y borado de urls
     def get(self):
         headers = {'Content-Type': 'text/html'}
         output = {}
@@ -55,7 +55,7 @@ class setup(Resource):
         redis_cache.delete(short_url)
         return('Done')
 
-class short2long(Resource):
+class short2long(Resource): # La uso en /<short_url>.  Toma la short url que viene del get y devuelve la long url asociada
     def get(self,short_url):
         long_url = redis_cache.get(short_url)
         
@@ -71,7 +71,7 @@ class short2long(Resource):
         redis_cache.setex(short_url, expire_cache, long_url) # expira en expire_cache segundos
         return redirect(long_url)
         
-class print_short2long(Resource):
+class print_short2long(Resource):  #La uso en /api/short_url/<short_url>.  No encontré la forma de meterla en la clase setup
     def get(self,short_url):
         value = redis_persist.get(short_url)
         if(value == None):
