@@ -6,11 +6,11 @@ import netifaces as ni
 
 
 
-#web server config
+# web server config
 listen_host = '0.0.0.0'
 listen_port = 5004
 
-#redis config
+# redis config
 redis_persist_host = '127.0.0.1'
 redis_persist_port = 6379
 redis_persist_db_number = 1
