@@ -7,15 +7,6 @@ import netifaces as ni
 file = open('config.yml', 'r')
 cfg = yaml.load(file, Loader=yaml.FullLoader)
 
-# redis config
-redis_persist_host = '127.0.0.1'
-redis_persist_port = 6379
-redis_persist_db_number = 1
-redis_cache_host = '127.0.0.1'
-redis_cache_port = 6379
-redis_cache_db_number = 0
-expire_cache = 10 # tiempo en segundos que dura el cache en Redis
-
 #short url host
 if( cfg['myhost']=="" ):
     ni.ifaddresses('eth0')
