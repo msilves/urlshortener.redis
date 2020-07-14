@@ -28,30 +28,31 @@ api = Api(app)
 redis_cache = redis.Redis(host = cfg['redis_cache']['host'], port = cfg['redis_cache']['port'], db = cfg['redis_cache']['db_number'])
 redis_persist = redis.Redis(host = cfg['redis_persist']['host'], port = cfg['redis_persist']['port'], db = cfg['redis_persist']['db_number'])
 
-class setup(Resource): # La uso en /api/short_url/.  Implementa el agregado y borado de urls
+class setup(Resource): # La uso en /api/short_url/.  Implementa el agregado y borrado de urls
     def get(self):
         headers = {'Content-Type': 'text/html'}
         output = {}
         for key in redis_persist.keys():
             key = key.decode('ascii')
             #print(key)
-            value = redis_persist.get(key).decode('ascii')
-            output[key] = value
-        return make_response(render_template('index.html', result = output),200,headers)
+            value =  redis_persist.get(key).decode('ascii') + ' ; ' + str(redis_persist.ttl(key))
+            short_url = myhost + '/' + key
+            output[short_url] = value # esta función es para lab únicamente, en un entrno real con una base grande podría llenar la memoria
+        return make_response(render_template('index.html', result = output),200,headers) # devuelve una table html con los valores de todas las keys y values
 
     def post(self):
         
-        long_url = request.json['URL']
+        long_url = request.json['VALUE']
         # print(long_url)
         
         shortener = URL_Shortener()
         short_url = shortener.shorten_url(long_url)
 
-        print(long_url + "," + myhost + "/" + short_url)
-        return long_url + "," + myhost + "/" + short_url
+        # print(long_url + "," + myhost + "/" + short_url)
+        return myhost + "/" + short_url
 
     def delete(self):
-        short_url = request.json['URL']
+        short_url = request.json['VALUE']
         redis_persist.delete(short_url)
         redis_cache.delete(short_url)
         return('Done')
@@ -69,7 +70,8 @@ class short2long(Resource): # La uso en /<short_url>.  Toma la short url que vie
                 long_url=value.decode('ascii')
         else:
             print("Matched Cache")
-        redis_cache.setex(short_url, expire_cache, long_url) # expira en expire_cache segundos
+        redis_cache.setex(short_url, cfg['redis_cache']['expire'], long_url) # Resetea el timeout del cache (expira en expire_cache segundos).  Esta escritura tiene un costo alto que no es aconsejable mantener con utilización alta
+        print(long_url)
         return redirect(long_url)
         
 class print_short2long(Resource):  #La uso en /api/short_url/<short_url>.  No encontré la forma de meterla en la clase setup
@@ -86,7 +88,7 @@ class URL_Shortener():
     
     def shorten_url(self, long_url):
         short_url=""
-        for key in redis_persist.keys():
+        for key in redis_persist.keys(): # Verifico si la url ya existe en la base.  Este chequeo está deprecado si se usa una función determinística, lo dejo por si lo cambio por hash o implemento un control de duplicados
             key = key.decode('ascii')
             value = redis_persist.get(key).decode('ascii')
 
@@ -95,8 +97,10 @@ class URL_Shortener():
     
         if(short_url == ""): # la long_url no se encontró en la base
             short_url = shortuuid.uuid(name=long_url)
+        if(cfg['redis_persist']['expire'] == ""):
             redis_persist.set(short_url,long_url)
-            
+        else:
+            redis_persist.setex(short_url, cfg['redis_persist']['expire'], long_url)  # Si existía igualmente reescribe el TTL
         return str(short_url)
     
     

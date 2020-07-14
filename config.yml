@@ -9,11 +9,12 @@ redis_persist:
   "host": "localhost"
   "port": 6379
   "db_number": 1
+  "expire": 15768000 # 6 meses de retención
 
 redis_cache:
   "host": "localhost"
   "port": 6379
-  "db_number": 1
+  "db_number": 0
   "expire": 10
   
   

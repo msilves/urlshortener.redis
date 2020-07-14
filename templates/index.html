@@ -2,9 +2,9 @@
 <html>
    <body>
       <table border = 1>
-         {% for key, value in result.items() %}
+         {% for short_url, value in result.items() %}
             <tr>
-               <th> {{ key }} </th>
+               <th> <a href="{{ short_url }}">{{ short_url }}</a> </th>
                <td> {{ value }} </td>
             </tr>
          {% endfor %}

@@ -14,7 +14,7 @@ Para agregar una URL hay que enviar un POST con un JSON
 El post se debe enviar a http://host/api/short-url
 El Json debe tener este formato:
 {
-	"URL" : "<URL LARGA>"
+	"VALUE" : "<URL LARGA>"
 }
 
 
@@ -22,7 +22,7 @@ Para borrar una URL corta ha que enviar un DELETE con un JSON
 El DELETE se debe enviar a http://host/api/short-url
 El Json debe tener este formato:
 {
-	"URL" : "<KEY>"
+	"VALUE" : "<KEY>"
 }
 
 donde la KEY está contenida en la url corta de esta forma:
