@@ -13,7 +13,6 @@ if( cfg['myhost']=="" ):
     server_ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
     myhost="http://" + server_ip
 
-
 app = Flask(__name__)
 api = Api(app)
 redis_cache = redis.Redis(host = cfg['redis_cache']['host'], port = cfg['redis_cache']['port'], db = cfg['redis_cache']['db_number'])
