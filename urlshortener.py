@@ -9,8 +9,8 @@ cfg = yaml.load(file, Loader=yaml.FullLoader)
 
 #short url host
 if( cfg['myhost']=="" ):
-    ni.ifaddresses('eth0')
-    server_ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+    ni.ifaddresses('en0')
+    server_ip = ni.ifaddresses('en0')[ni.AF_INET][0]['addr']
     myhost="http://" + server_ip
 
 app = Flask(__name__)
